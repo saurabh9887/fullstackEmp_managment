@@ -21,3 +21,33 @@ export const addEmployee = (employeeName, employeeEmail) => {
     );
   });
 };
+
+export const findEmpById = async (employeeKeyID) => {
+  return new Promise((resolve, reject) => {
+    db.query(
+      "SELECT * FROM employees WHERE employeeKeyID = ?",
+      [employeeKeyID],
+      (err, result) => {
+        if (err) return reject(err);
+        resolve(result);
+      }
+    );
+  });
+};
+
+export const updateEmpInModel = (
+  employeeKeyID,
+  employeeName,
+  employeeEmail
+) => {
+  return new Promise((resolve, reject) => {
+    db.query(
+      "UPDATE employees SET employeeName = ?, employeeEmail = ? WHERE employeeKeyID = ?",
+      [employeeName, employeeEmail, employeeKeyID],
+      (err, result) => {
+        if (err) return reject(err);
+        resolve(result);
+      }
+    );
+  });
+};

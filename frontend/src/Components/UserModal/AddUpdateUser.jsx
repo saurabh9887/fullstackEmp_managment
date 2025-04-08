@@ -2,13 +2,37 @@ import React, { useEffect, useState } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import { Error_Message } from "../GlobalError";
+import {
+  AddUpdateEmployeeAPI,
+  GetSingleEmployeeByIDAPI,
+} from "../../Services/Employees/EmployeeAPI";
+import SuccessPopUp from "../SuccessPopUp";
 
-const AddUpdateUser = ({ show, onHide, modelRequestData }) => {
+const AddUpdateUser = ({
+  show,
+  onHide,
+  modelRequestData,
+  setAddUpdateActionDone,
+  closeAll,
+}) => {
   const [error, setError] = useState();
+  const [showSuccessPopUp, setShowSuccessPopUp] = useState(null);
+  const [successMsg, setSuccessMsg] = useState(null);
   const [userObj, setUserObj] = useState({
     name: null,
     email: null,
+    employeeKeyID: null,
   });
+
+  useEffect(() => {
+    if (
+      modelRequestData.employeeKeyID !== null &&
+      modelRequestData.employeeKeyID !== undefined &&
+      modelRequestData.employeeKeyID !== ""
+    ) {
+      GetSingleEmployeeByID(modelRequestData.employeeKeyID);
+    }
+  }, [modelRequestData.employeeKeyID]);
 
   const handleAddUpdateUser = () => {
     let isValid = false;
@@ -25,8 +49,9 @@ const AddUpdateUser = ({ show, onHide, modelRequestData }) => {
     }
 
     const api_params = {
-      name: userObj.name,
-      email: userObj.email,
+      employeeName: userObj.name,
+      employeeEmail: userObj.email,
+      employeeKeyID: modelRequestData.employeeKeyID,
     };
 
     if (!isValid) {
@@ -35,12 +60,40 @@ const AddUpdateUser = ({ show, onHide, modelRequestData }) => {
   };
 
   const AddUpdateUserData = async (api_params) => {
-    console.log(api_params);
-    // try {
-    //   const response = await api_call(api_params);
-    // } catch (error) {
-    //   console.log(error);
-    // }
+    debugger;
+    try {
+      const res = await AddUpdateEmployeeAPI(api_params);
+      if (res) {
+        setSuccessMsg(
+          modelRequestData.employeeKeyID === null
+            ? "Employee added successfully!"
+            : "Employee updated successfully!"
+        );
+        setShowSuccessPopUp(true);
+        setAddUpdateActionDone(true);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // Get Single Employee
+  const GetSingleEmployeeByID = async (id) => {
+    debugger;
+    try {
+      const res = await GetSingleEmployeeByIDAPI(id);
+      if (res.status === 200) {
+        console.log(res);
+        const modelData = res.data[0];
+        setUserObj((prev) => ({
+          ...prev,
+          name: modelData.employeeName,
+          email: modelData.employeeEmail,
+        }));
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const setInitialData = () => {
@@ -142,6 +195,14 @@ const AddUpdateUser = ({ show, onHide, modelRequestData }) => {
           Submit
         </Button>
       </Modal.Footer>
+      {showSuccessPopUp && (
+        <SuccessPopUp
+          show={showSuccessPopUp}
+          onHide={() => setShowSuccessPopUp(false)}
+          successMsg={successMsg}
+          onConfirm={closeAll}
+        />
+      )}
     </Modal>
   );
 };
