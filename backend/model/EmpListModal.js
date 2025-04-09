@@ -51,3 +51,16 @@ export const updateEmpInModel = (
     );
   });
 };
+
+export const deleteEmp = (employeeKeyID) => {
+  return new Promise((resolve, reject) => {
+    db.query(
+      "DELETE FROM employees WHERE employeeKeyID = ?",
+      [employeeKeyID],
+      (err, result) => {
+        if (err) return reject(err);
+        resolve(result);
+      }
+    );
+  });
+};

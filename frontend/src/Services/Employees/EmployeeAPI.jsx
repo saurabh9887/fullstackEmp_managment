@@ -18,3 +18,9 @@ export const AddUpdateEmployeeAPI = async (params) => {
   const res = await axios.post(url, params);
   return res;
 };
+
+export const DeleteEmpAPI = async (id) => {
+  const url = `${Base_url}/deleteemp?employeeKeyID=${id}`;
+  const res = await axios.delete(url);
+  return res;
+};

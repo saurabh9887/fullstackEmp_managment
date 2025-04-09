@@ -3,12 +3,28 @@ import {
   addEmployee as createEmpInModel,
   findEmpById,
   updateEmpInModel,
+  deleteEmp,
 } from "../model/EmpListModal.js";
 
 export const getAllEmployees = async (req, res) => {
   try {
     const emp = await getAllEmpFromModel();
     res.json(emp);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const deleteEmployee = async (req, res) => {
+  try {
+    const { employeeKeyID } = req.query;
+
+    if (!employeeKeyID) {
+      return res.status(400).json({ error: "employeeKeyID is required" });
+    }
+
+    const result = await deleteEmp(employeeKeyID);
+    res.json({ message: "Employee deleted successfully", result });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

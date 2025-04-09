@@ -25,14 +25,17 @@ const AddUpdateUser = ({
   });
 
   useEffect(() => {
+    // debugger;
     if (
-      modelRequestData.employeeKeyID !== null &&
-      modelRequestData.employeeKeyID !== undefined &&
-      modelRequestData.employeeKeyID !== ""
+      modelRequestData?.employeeKeyID !== null &&
+      modelRequestData?.employeeKeyID !== undefined &&
+      modelRequestData?.employeeKeyID !== ""
     ) {
-      GetSingleEmployeeByID(modelRequestData.employeeKeyID);
+      GetSingleEmployeeByID(modelRequestData?.employeeKeyID);
     }
-  }, [modelRequestData.employeeKeyID]);
+  }, [modelRequestData?.employeeKeyID]);
+
+  console.log(modelRequestData.employeeKeyID);
 
   const handleAddUpdateUser = () => {
     let isValid = false;
@@ -79,7 +82,7 @@ const AddUpdateUser = ({
 
   // Get Single Employee
   const GetSingleEmployeeByID = async (id) => {
-    debugger;
+    // debugger;
     try {
       const res = await GetSingleEmployeeByIDAPI(id);
       if (res.status === 200) {
@@ -102,6 +105,7 @@ const AddUpdateUser = ({
       ...prev,
       name: null,
       email: null,
+      employeeKeyID: null,
     }));
   };
 
@@ -195,14 +199,16 @@ const AddUpdateUser = ({
           Submit
         </Button>
       </Modal.Footer>
-      {showSuccessPopUp && (
-        <SuccessPopUp
-          show={showSuccessPopUp}
-          onHide={() => setShowSuccessPopUp(false)}
-          successMsg={successMsg}
-          onConfirm={closeAll}
-        />
-      )}
+
+      <SuccessPopUp
+        show={showSuccessPopUp}
+        onHide={() => setShowSuccessPopUp(false)}
+        successMsg={successMsg}
+        onConfirm={() => {
+          closeAll();
+          setShowSuccessPopUp(false);
+        }}
+      />
     </Modal>
   );
 };

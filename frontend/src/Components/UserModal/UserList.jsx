@@ -4,7 +4,11 @@ import "bootstrap/dist/js/bootstrap.bundle.min";
 // import AddUpdateUser from "./Components/AddUpdateUser";
 import { Tooltip } from "@mui/material";
 import AddUpdateUser from "./AddUpdateUser";
-import { GetEmployeeListAPI } from "../../Services/Employees/EmployeeAPI";
+import {
+  DeleteEmpAPI,
+  GetEmployeeListAPI,
+} from "../../Services/Employees/EmployeeAPI";
+import axios from "axios";
 // import { Tooltip } from "bootstrap/dist/js/bootstrap.bundle.min";
 
 const UserList = () => {
@@ -21,7 +25,10 @@ const UserList = () => {
   }, []);
 
   useEffect(() => {
-    GetEmployeeList();
+    if (addUpdateActionDone) {
+      GetEmployeeList();
+    }
+    setAddUpdateActionDone(false);
   }, [addUpdateActionDone]);
 
   // Get Employee list
@@ -52,9 +59,21 @@ const UserList = () => {
 
     setModelRequestData((prev) => ({
       ...prev,
-      Action: 'update',
+      Action: "update",
       employeeKeyID: value.employeeKeyID,
     }));
+  };
+
+  const handleDeleteEmp = async (value) => {
+    try {
+      const res = await DeleteEmpAPI(value.employeeKeyID);
+      if (res.status === 200) {
+        alert("Employee deleted successfully");
+        setAddUpdateActionDone(true);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const closeAll = () => {
@@ -100,7 +119,7 @@ const UserList = () => {
                 <Tooltip title="Delete">
                   <button
                     className="btn btn-secondary"
-                    //   onClick={() => handleAddUser()}
+                    onClick={() => handleDeleteEmp(item)}
                   >
                     Delete
                   </button>
